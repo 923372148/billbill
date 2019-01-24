@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://gzcc:jsja137139@caixiaoshan.club:27017/bill
+# username: authmanager
+#     password: hopnetworks
+#     database: dota2data
+#      authentication-database: dota2data
+server:
+  port:  8888
