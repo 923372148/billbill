@@ -12,7 +12,7 @@ public class User implements Serializable {
 
 @Id
     private String userId;
-private String accountId;
+private String openId;
 private String userName;
 private List<ObjectId> personalBillId;
 private String password;
@@ -26,6 +26,15 @@ private String password;
     }
 
     private String phone;
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
     public String getUserId() {
         return userId;
     }

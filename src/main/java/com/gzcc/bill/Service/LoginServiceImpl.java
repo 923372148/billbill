@@ -1,8 +1,11 @@
 package com.gzcc.bill.Service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.gzcc.bill.Repoistory.PersonalBillRepoistory;
 import com.gzcc.bill.Repoistory.UserRepoistory;
+import com.gzcc.bill.Util.AesCbcUtil;
+import com.gzcc.bill.Util.HttpRequestUtil;
 import com.gzcc.bill.Util.ResourceBundleUtil;
 import com.gzcc.bill.domain.User;
 import org.slf4j.Logger;
@@ -120,7 +123,7 @@ map.put("Msg","密码错误");
         }
     }
     @Override
-    public String registUser(JSONObject jsonObject) {
+    public Map regist(String iv, String encryptedData, String code) {
 /**
  *
  * 功能描述:
@@ -130,108 +133,107 @@ map.put("Msg","密码错误");
  * @auther: hopnetworks
  * @function: 注册操作函数
  */
-
-        User user = new User();
-        user.setUser(jsonObject.getString("username"));
-        user.setPassword(jsonObject.getString("password"));
-        if (userRepoistory.findByUser(jsonObject.getString("username")) == null) {
-            System.out.println("user：" + user);
-            userRepoistory.save(user);
-            return "success";
-        } else {
-            return "用户名存在";
-        }
-
-    }
-    @Override
-    public Map regist(String userName, String password,int companyId,String userType) {
-/**
- *
- * 功能描述:
- *
- * @param: [jsonObject]
- * @return: map
- * @auther: hopnetworks
- * @function: 注册操作函数
- */
-
-Map map=new HashMap() ;
-        if (userRepoistory.findByUser(userName ) == null) {
-            User user = new User();
-            user .setUser(userName );
-            user.setPassword(password );
-user.setStatus(true);
-            user.setType("2");
-if(userType!=null){
-    user.setType(userType);
-}
-user.setLasttime(new Date());
-
-
-//companyRepository.findById(companyId);
-            Company company=companyRepository.findcompany(companyId);
-
-user.setCompany(company);
-            System.out.println("user：" + user);
-            map .put("status",true) ;
-            map .put("user_id", userRepoistory.save(user).getId() ) ;
-            map .put("user_name", userName) ;
-           return map;
-        } else {
-
-            map .put("status",false) ;
-            map .put("Ms g","用户名相同");
-            return map;
-        }
-
-    }
-
-    @Override
-    public User searchInfo(String userName) throws ParseException {
-//Map map =new HashMap() ;
-        //map .put("status",false) ;
-        boolean status = false;//查询是否成功的布尔变量
-        User user = null;
-        user = userRepoistory.findByUser(userName );//数据库寻找user并赋值
-        if (user != null) {
-            status = true;
-            return user;
-        } else {
-            return null;
-        }
-
-    }
-    @Override
-    public Map findUserBalance(String userName){/**
-     *
-     * 功能描述:
-     *
-     * @param: [userName]
-     * @return: java.util.Map
-     * @auther: hopnetworks
-     * @function: 查询余额
-     */
         Map map = new HashMap();
-        map .put("status",false) ;
-       try{
-        User user = userRepoistory.findByUser(userName);
-        if (user!=null) {
-            map.put("status",true) ;
-            map.put("User", user.getUser());
-            map.put("Single",user .getCompany() .getBalance_s());
-            map.put("Double",user.getCompany() .getBalance_d() );
-            map.put("Movable",user.getCompany() .getBalance_mov() );
-            map.put("Stationary",user.getCompany() .getBalance_sta() );
-            map.put("DoubleView",user.getCompany() .getBalance_sta() );
-return map;
-        }
-        else {
+
+        // login code can not be null
+        if (code == null || code.length() == 0) {
+            map.put("status", 0);
+            map.put("msg", "code 不能为空");
             return map;
         }
+        // mini-Program's AppID
+        String wechatAppId =ResourceBundleUtil.getSystemString("AppId");
+//String wechatId=System .getProperty("AppId");
+        String wechatSecretKey=ResourceBundleUtil.getSystemString("AppKey");
+        // mini-Program's session-key
+//        String wechatSecretKey = "d49895f4f1904e3bee14cd7e8f350b66";
 
-        }catch(Exception e){
-           return map;
-       }
+        String grantType = "authorization_code";
+
+        // using login code to get sessionId and openId
+        String params = "appid=" + wechatAppId + "&secret=" + wechatSecretKey + "&js_code=" + code + "&grant_type=" + grantType;
+
+        // sending request
+        String sr = HttpRequestUtil.sendGet("https://api.weixin.qq.com/sns/jscode2session", params);
+
+        // analysis request content
+        JSONObject json = JSONObject.parseObject( sr);
+
+        // getting session_key
+        String sessionKey = json.get("session_key").toString();
+
+        // getting open_id
+        String openId = json.get("openid").toString();
+
+        // decoding encrypted info with AES
+        try {
+            String result = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
+            if (null != result && result.length() > 0) {
+                map.put("status", 1);
+                map.put("Msg", "解密成功");
+                JSONObject userInfoJSON = JSONObject.parseObject(result);
+                System .out .println(result );
+                Map userInfo = new HashMap();
+                userInfo.put("openId", userInfoJSON.get("openId"));
+                userInfo.put("nickName", userInfoJSON.get("nickName"));
+                userInfo.put("gender", userInfoJSON.get("gender"));
+                userInfo.put("city", userInfoJSON.get("city"));
+                userInfo.put("province", userInfoJSON.get("province"));
+                userInfo.put("country", userInfoJSON.get("country"));
+                userInfo.put("avatarUrl", userInfoJSON.get("avatarUrl"));
+                userInfo.put("unionId", userInfoJSON.get("unionId"));
+                userInfo.put("telphone", userInfoJSON.get("telphone"));
+
+                //System.out .println("ddddd是"+userInfoJSON.getString("openId") );
+                try {
+                    User user =userRepoistory.findByOpenId(userInfoJSON.getString("openId"));
+                    if(user==null ){
+
+                        userInfo.put("username", null);
+                        userInfo.put("password",null);
+                    }
+
+                    userInfo.put("username", user .getUserName() );
+                    userInfo.put("password",user .getPassword() );
+                }
+                catch (Exception e){
+                    map.put("status", 0);
+                    map.put("msg", "解密失败,请重新授权");
+                    return map;
+
+                }
+                map.put("userInfo", userInfo);
+
+
+                return map;
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        map.put("status", 0);
+        map.put("msg", "解密失败,请重新授权");
+        return map;
+    }
+
+
+//    @Override
+//    public User searchInfo(String userName) throws ParseException {
+////Map map =new HashMap() ;
+//        //map .put("status",false) ;
+//        boolean status = false;//查询是否成功的布尔变量
+//        User user = null;
+//        user = userRepoistory.findByUser(userName );//数据库寻找user并赋值
+//        if (user != null) {
+//            status = true;
+//            return user;
+//        } else {
+//            return null;
+//        }
+//
+//    }
+
     }
 
 
