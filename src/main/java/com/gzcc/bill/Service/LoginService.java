@@ -25,8 +25,8 @@ public interface LoginService {
 // String findBalance(JSONObject json);
 
 //返回键值对
-  Map login(String username, String password, String longitude, String latitude);
-    Map regist(String username, String password, int companyId, String userType);
+  Map login(String openId);
+    Map regist(String iv, String encryptedData, String code);
 
 
 

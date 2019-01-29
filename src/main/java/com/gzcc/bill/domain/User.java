@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Document
@@ -16,6 +17,15 @@ private String openId;
 private String userName;
 private List<ObjectId> personalBillId;
 private String password;
+private Date lastTimeLogin;
+
+    public Date getLastTimeLogin() {
+        return lastTimeLogin;
+    }
+
+    public void setLastTimeLogin(Date lastTimeLogin) {
+        this.lastTimeLogin = lastTimeLogin;
+    }
 
     public String getPhone() {
         return phone;

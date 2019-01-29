@@ -1,11 +1,13 @@
 package com.gzcc.bill.Service;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gzcc.bill.Repoistory.PersonalBillRepoistory;
 import com.gzcc.bill.Repoistory.UserRepoistory;
 import com.gzcc.bill.Util.AesCbcUtil;
 import com.gzcc.bill.Util.HttpRequestUtil;
+import com.gzcc.bill.Util.JwtUtil;
 import com.gzcc.bill.Util.ResourceBundleUtil;
 import com.gzcc.bill.domain.User;
 import org.slf4j.Logger;
@@ -36,85 +38,80 @@ private UserRepoistory userRepoistory ;
 //    @Autowired
 //    private MachineRepoistory machineRepoistory ;
 
-
     private Logger logger = LoggerFactory.getLogger(getClass());
 public final static String QQ_MAP_API=ResourceBundleUtil.getSystemString("QQ_MAP_API");
     @Autowired
 public  LoginServiceImpl (PersonalBillRepoistory personalBillRepoistory){
-
 this.personalBillRepoistory=personalBillRepoistory;
 }
+public LoginServiceImpl (){}
     @Override
-    public Map login(String username,String password,String longitude,String latitude) {
+    public Map login(String openId) {
 
 //获取接收的密码和登录名
           Map map=new HashMap() ; //返回前端的键值对
         map .put("status",false);
-        User user = userRepoistory.findByAccountId("");
+        User user =userRepoistory.findByOpenId(openId );
         //数据库查找有没有user数据
         if (user != null) {
             // System.out.print(DigestUtils.md5Hex(user.getPassword()));
-            if (password.equals(user.getPassword())) {
+
                 //md5Hex(password)
-                user .setLasttime(new Date() );
-                user.setStatus(true);
-                Logs logs =new Logs();
-                logs.setUser(username);
-                logs.setLocation(longitude+","+latitude);
-                logs .setLogintime(new Date() ) ;
+                user .setLastTimeLogin(new Date() );
+
+//                Logs logs =new Logs();
+//                logs.setUser(username);
+//                logs.setLocation(longitude+","+latitude);
+//                logs .setLogintime(new Date() ) ;
 
                 map.put("status",true);
-                map.put("user_id",  user.getId() ) ;
-                map.put("username",user.getUser() );
-                map.put("company_id",user.getCompany().getId());
-                map.put("type",user.getType());
-                String params = "location=" + latitude + "," +longitude + "&key=" + QQ_MAP_API +"&get_poi=0";
+                map.put("user_id",  user.getOpenId() ) ;
+//                map.put("username",user.getUser() );
+//                map.put("company_id",user.getCompany().getId());
+//                map.put("type",user.getType());
+             //   String params = "location=" + latitude + "," +longitude + "&key=" + QQ_MAP_API +"&get_poi=0";
                 // sending request
-                String result = HttpRequestUtil.sendGet("https://apis.map.qq.com/ws/geocoder/v1/", params);
+            //    String result = HttpRequestUtil.sendGet("https://apis.map.qq.com/ws/geocoder/v1/", params);
 
-                JSONObject json=new JSONObject();
-                String address="";
-                try {
-                  json = GetRequestJsonUtils.getJson(result);
-                  address=json.getString("result");
-                    json=GetRequestJsonUtils.getJson(address);
-                    if (address != null) {
-                        address = json.getString("address");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (address != null) {
-                   logs.setAddress(address);
-                    user.setLastip(address);
-                }
-logger.info("用户登录地址"+address);
-                map.put("address",address);
-                logsRepoistory .save(logs);
+//                JSONObject json=new JSONObject();
+//                String address="";
+//                try {
+//                  json = JSON.parseObject(result);
+//                  address=json.getString("result");
+//                    json=JSON.parseObject(address);
+//                    if (address != null) {
+//                        address = json.getString("address");
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//             //   if (address != null) {
+////                   logs.setAddress(address);
+//
+//             //   }
+//logger.info("用户登录地址"+address);
+//                map.put("address",address);
+              //  logsRepoistory .save(logs);
                 userRepoistory .save(user );
-                String token;
-                switch (user.getType()){
-                    // 1234 为数据库相对应的类型，
-                    case "1" :  token = JwtUtil.getToken(user .getUser(),"companyManager");break;
-                    // 为 1的为公司管理员
-                    case "2":  token = JwtUtil.getToken(user .getUser(),"companyworker");break;
-                    // 为 2 为公司工作人员
-                    case "3":  token = JwtUtil.getToken(user .getUser(),"superManager");break;
-                    //3 为超管
-                    default:   token= JwtUtil.getToken(user .getUser(),"user");break;
-                    //  初始角色
-                }
+                String token=JwtUtil.getToken(openId,"normalUser");
+//                switch (user.getType()){
+//                    // 1234 为数据库相对应的类型，
+//                    case "1" :  token = JwtUtil.getToken(user .getUser(),"companyManager");break;
+//                    // 为 1的为公司管理员
+//                    case "2":  token = JwtUtil.getToken(user .getUser(),"companyworker");break;
+//                    // 为 2 为公司工作人员
+//                    case "3":  token = JwtUtil.getToken(user .getUser(),"superManager");break;
+//                    //3 为超管
+//                    default:   token= JwtUtil.getToken(user .getUser(),"user");break;
+//                    //  初始角色
+//                }
 
 
                 map.put("token",token );
                 return map;
 //                       {"MsgType":"login","User":"nnnnn","Status":"true/false"}
                 //登陆成功
-            } else {
-map.put("Msg","密码错误");
-                return map;
-                //  ("密码错误");
-            }
+
 
         } else {
             map.put("Msg","用户名错误");
@@ -133,12 +130,13 @@ map.put("Msg","密码错误");
  * @auther: hopnetworks
  * @function: 注册操作函数
  */
+User user;
         Map map = new HashMap();
-
+        map.put("status", false);
         // login code can not be null
         if (code == null || code.length() == 0) {
-            map.put("status", 0);
-            map.put("msg", "code 不能为空");
+
+            map.put("msg", "请先登录微信");
             return map;
         }
         // mini-Program's AppID
@@ -169,40 +167,43 @@ map.put("Msg","密码错误");
         try {
             String result = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
             if (null != result && result.length() > 0) {
-                map.put("status", 1);
+
+                map.put("status", true);
                 map.put("Msg", "解密成功");
                 JSONObject userInfoJSON = JSONObject.parseObject(result);
                 System .out .println(result );
-                Map userInfo = new HashMap();
-                userInfo.put("openId", userInfoJSON.get("openId"));
-                userInfo.put("nickName", userInfoJSON.get("nickName"));
-                userInfo.put("gender", userInfoJSON.get("gender"));
-                userInfo.put("city", userInfoJSON.get("city"));
-                userInfo.put("province", userInfoJSON.get("province"));
-                userInfo.put("country", userInfoJSON.get("country"));
-                userInfo.put("avatarUrl", userInfoJSON.get("avatarUrl"));
-                userInfo.put("unionId", userInfoJSON.get("unionId"));
-                userInfo.put("telphone", userInfoJSON.get("telphone"));
+//                Map userInfo = new HashMap();
+//
+//                userInfo.put("openId", userInfoJSON.get("openId"));
+//                userInfo.put("nickName", userInfoJSON.get("nickName"));
+//                userInfo.put("gender", userInfoJSON.get("gender"));
+//                userInfo.put("city", userInfoJSON.get("city"));
+//                userInfo.put("province", userInfoJSON.get("province"));
+//                userInfo.put("country", userInfoJSON.get("country"));
+//                userInfo.put("avatarUrl", userInfoJSON.get("avatarUrl"));
+//                userInfo.put("unionId", userInfoJSON.get("unionId"));
+           //    userInfo.put("telphone", userInfoJSON.get("telphone"));
 
                 //System.out .println("ddddd是"+userInfoJSON.getString("openId") );
                 try {
-                    User user =userRepoistory.findByOpenId(userInfoJSON.getString("openId"));
-                    if(user==null ){
+             user =userRepoistory.findByOpenId(openId );
+                    if(user!=null){
+                 return map;
 
-                        userInfo.put("username", null);
-                        userInfo.put("password",null);
                     }
+                    user=new User();
+                    user.setOpenId(openId );
+                    user.setPhone(userInfoJSON.get("telphone").toString());
 
-                    userInfo.put("username", user .getUserName() );
-                    userInfo.put("password",user .getPassword() );
                 }
                 catch (Exception e){
-                    map.put("status", 0);
-                    map.put("msg", "解密失败,请重新授权");
+
+                    map.put("repeatedAuth", "true");
+                    map.put("msg", "解密失败,请重新授权,找不到此账号");
                     return map;
 
                 }
-                map.put("userInfo", userInfo);
+        //        map.put("userInfo", userInfo);
 
 
                 return map;
@@ -212,7 +213,7 @@ map.put("Msg","密码错误");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        map.put("status", 0);
+
         map.put("msg", "解密失败,请重新授权");
         return map;
     }
@@ -236,6 +237,3 @@ map.put("Msg","密码错误");
 
     }
 
-
-
-}
