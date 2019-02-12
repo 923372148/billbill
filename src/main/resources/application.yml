@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://gzcc:jsja137139@caixiaoshan.club:27017/bill
+      uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
 # username: authmanager
 #     password: hopnetworks
 #     database: dota2data

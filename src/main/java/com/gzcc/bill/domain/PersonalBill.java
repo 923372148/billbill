@@ -9,10 +9,11 @@ import java.util.List;
 
 @Document
 public class PersonalBill implements Serializable {
+    private static final long serialVersionUID = -7816294302377473088L;
     @Id
     private ObjectId  personalBillId;
     private List<String> userListId;
-    private List<ObjectId> kindListId;
+
     private long icome;
     private long expenditure;
     private List<ObjectId > runningAccountListId;

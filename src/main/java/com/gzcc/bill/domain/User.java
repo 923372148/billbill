@@ -18,6 +18,15 @@ private String userName;
 private List<ObjectId> personalBillId;
 private String password;
 private Date lastTimeLogin;
+private List<ObjectId> kindId;
+
+    public List<ObjectId> getKindId() {
+        return kindId;
+    }
+
+    public void setKindId(List<ObjectId> kindId) {
+        this.kindId = kindId;
+    }
 
     public Date getLastTimeLogin() {
         return lastTimeLogin;

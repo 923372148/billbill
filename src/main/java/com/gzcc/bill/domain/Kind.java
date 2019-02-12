@@ -1,9 +1,52 @@
 package com.gzcc.bill.domain;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
 @Document
 public class Kind implements Serializable  {
+    @Id
+    private ObjectId kindId;
+
+    private static final long serialVersionUID = -2806344238638420043L;
+
+    private String kindName;
+
+    private boolean ifDeafult;
+
+    public ObjectId getKindId() {
+        return kindId;
+    }
+
+    public void setKindId(ObjectId kindId) {
+        this.kindId = kindId;
+    }
+public Kind(){}
+    public Kind(String kindName, boolean ifDeafult) {
+        this.kindName = kindName;
+        this.ifDeafult = ifDeafult;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getKindName() {
+        return kindName;
+    }
+
+    public void setKindName(String kindName) {
+        this.kindName = kindName;
+    }
+
+    public boolean isIfDeafult() {
+        return ifDeafult;
+    }
+
+    public void setIfDeafult(boolean ifDeafult) {
+        this.ifDeafult = ifDeafult;
+    }
 }
