@@ -19,14 +19,11 @@ public class UserController {
     public Map login(HttpServlet request, String openId){
     Map map=loginService.login(openId);
     return  map;
-
 }
     @RequestMapping(value="/regist")
     @ResponseBody
     public Map regist(String iv, String encryptedData, String code) {
         Map map = loginService.regist(iv, encryptedData, code);
         return map;
-
-
     }
 }

@@ -1,4 +1,13 @@
 spring:
+  dubbo:
+   application:
+     name: provider
+   registry:
+     address: zookeeper://127.0.0.1:2181
+   protocol:
+    name: dubbo
+    port:8880
+   scan:  org.spring.springboot.dubbo
   data:
     mongodb:
       uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
@@ -8,3 +17,5 @@ spring:
 #      authentication-database: dota2data
 server:
   port:  8889
+
+  106.12.203.66
