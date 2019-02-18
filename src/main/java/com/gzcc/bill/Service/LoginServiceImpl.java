@@ -65,8 +65,8 @@ public LoginServiceImpl (){}
 //                logs .setLogintime(new Date() ) ;
 
                 map.put("status",true);
-                map.put("user_id",  user.getOpenId() ) ;
-//                map.put("username",user.getUser() );
+                map.put("userId",  user.getOpenId() ) ;
+               map.put("username",user.getUserName() );
 //                map.put("company_id",user.getCompany().getId());
 //                map.put("type",user.getType());
              //   String params = "location=" + latitude + "," +longitude + "&key=" + QQ_MAP_API +"&get_poi=0";
@@ -94,18 +94,7 @@ public LoginServiceImpl (){}
               //  logsRepoistory .save(logs);
                 userRepoistory .save(user );
                 String token=JwtUtil.getToken(openId,"normalUser");
-//                switch (user.getType()){
-//                    // 1234 为数据库相对应的类型，
-//                    case "1" :  token = JwtUtil.getToken(user .getUser(),"companyManager");break;
-//                    // 为 1的为公司管理员
-//                    case "2":  token = JwtUtil.getToken(user .getUser(),"companyworker");break;
-//                    // 为 2 为公司工作人员
-//                    case "3":  token = JwtUtil.getToken(user .getUser(),"superManager");break;
-//                    //3 为超管
-//                    default:   token= JwtUtil.getToken(user .getUser(),"user");break;
-//                    //  初始角色
-//                }
-
+//
 
                 map.put("token",token );
                 return map;
@@ -194,7 +183,7 @@ User user;
                     user=new User();
                     user.setOpenId(openId );
                     user.setPhone(userInfoJSON.get("telphone").toString());
-
+                    map.put("userId",openId );
                 }
                 catch (Exception e){
 
