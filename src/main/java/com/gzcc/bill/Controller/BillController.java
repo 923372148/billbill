@@ -34,7 +34,7 @@ public class BillController {
      new ObjectId(openId);
       User user= userRepoistory.findByOpenId(openId);
         ObjectId objectId=user.getPersonalBillId().get(0);
-   return personalBillRepoistory.findByObjectId(objectId);
+   return personalBillRepoistory.findByPersonalBillId(objectId);
 
     }
 

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PersonalBillRepoistory extends MongoRepository<PersonalBill,String > {
 
-PersonalBill findByObjectId(ObjectId objectId );
+PersonalBill findByPersonalBillId(ObjectId personalBillId );
 }
