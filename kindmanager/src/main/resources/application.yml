@@ -7,7 +7,7 @@ spring:
    protocol:
     name: dubbo
     port: 8880
-   scan:  com.gzcc.kindmanager
+   scan:  com.gzcc.kindmanager.Service
   data:
     mongodb:
       uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
