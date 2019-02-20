@@ -1,6 +1,7 @@
-package com.gzcc.kindmanager.Service;
+package com.gzcc.bill.Service;
 
-import com.gzcc.kindmanager.domain.Kind;
+
+import com.gzcc.bill.domain.Kind;
 import org.bson.types.ObjectId;
 
 public interface KindService {

@@ -16,7 +16,17 @@ public class User implements Serializable {
 private String openId;
 private String userName;
 private List<ObjectId> personalBillId;
-private String password;
+private ObjectId defalutpersonalBillId;
+
+    public ObjectId getDefalutpersonalBillId() {
+        return defalutpersonalBillId;
+    }
+
+    public void setDefalutpersonalBillId(ObjectId defalutpersonalBillId) {
+        this.defalutpersonalBillId = defalutpersonalBillId;
+    }
+
+    private String password;
 private Date lastTimeLogin;
 private List<ObjectId> kindId;
 

@@ -3,13 +3,15 @@ package com.gzcc.bill.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.gzcc.bill.Repoistory.PersonalBillRepoistory;
-import com.gzcc.bill.Repoistory.UserRepoistory;
+import com.gzcc.bill.Repository.PersonalBillRepository;
+import com.gzcc.bill.Repository.UserRepository;
 import com.gzcc.bill.Util.AesCbcUtil;
 import com.gzcc.bill.Util.HttpRequestUtil;
 import com.gzcc.bill.Util.JwtUtil;
 import com.gzcc.bill.Util.ResourceBundleUtil;
+import com.gzcc.bill.domain.PersonalBill;
 import com.gzcc.bill.domain.User;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +33,18 @@ import java.util.Map;
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
 
-private PersonalBillRepoistory personalBillRepoistory;
+private PersonalBillRepository personalBillRepository;
 @Autowired
-private UserRepoistory userRepoistory ;
+private UserRepository userRepository ;
     //
 //    @Autowired
-//    private MachineRepoistory machineRepoistory ;
+//    private MachineRepository machineRepository ;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 public final static String QQ_MAP_API=ResourceBundleUtil.getSystemString("QQ_MAP_API");
     @Autowired
-public  LoginServiceImpl (PersonalBillRepoistory personalBillRepoistory){
-this.personalBillRepoistory=personalBillRepoistory;
+public  LoginServiceImpl (PersonalBillRepository personalBillRepository){
+this.personalBillRepository=personalBillRepository;
 }
 public LoginServiceImpl (){}
     @Override
@@ -51,7 +53,7 @@ public LoginServiceImpl (){}
 //获取接收的密码和登录名
           Map map=new HashMap() ; //返回前端的键值对
         map .put("status",false);
-        User user =userRepoistory.findByOpenId(openId );
+        User user =userRepository.findByOpenId(openId );
         //数据库查找有没有user数据
         if (user != null) {
             // System.out.print(DigestUtils.md5Hex(user.getPassword()));
@@ -91,8 +93,8 @@ public LoginServiceImpl (){}
 //             //   }
 //logger.info("用户登录地址"+address);
 //                map.put("address",address);
-              //  logsRepoistory .save(logs);
-                userRepoistory .save(user );
+              //  logsRepository .save(logs);
+                userRepository .save(user );
                 String token=JwtUtil.getToken(openId,"normalUser");
 //
 
@@ -175,14 +177,20 @@ User user;
 
                 //System.out .println("ddddd是"+userInfoJSON.getString("openId") );
                 try {
-             user =userRepoistory.findByOpenId(openId );
+             user =userRepository.findByOpenId(openId );
                     if(user!=null){
                  return map;
 
                     }
                     user=new User();
+                    user.setUserName(userInfoJSON.get("nickName").toString());
                     user.setOpenId(openId );
+                    PersonalBill personalBill=new PersonalBill("默认账单"," ");
+                    ObjectId objectId=personalBillRepository.save(personalBill).getPersonalBillId();
+                    user.getPersonalBillId().add(objectId);
+                    user.setDefalutpersonalBillId(objectId);
                     user.setPhone(userInfoJSON.get("telphone").toString());
+                    userRepository.save(user);
                     map.put("userId",openId );
                 }
                 catch (Exception e){
@@ -214,7 +222,7 @@ User user;
 //        //map .put("status",false) ;
 //        boolean status = false;//查询是否成功的布尔变量
 //        User user = null;
-//        user = userRepoistory.findByUser(userName );//数据库寻找user并赋值
+//        user = userRepository.findByUser(userName );//数据库寻找user并赋值
 //        if (user != null) {
 //            status = true;
 //            return user;

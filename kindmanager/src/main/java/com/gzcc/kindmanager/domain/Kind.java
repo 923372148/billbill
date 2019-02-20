@@ -1,4 +1,4 @@
-package com.gzcc.bill.domain;
+package com.gzcc.kindmanager.domain;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -15,7 +15,7 @@ public class Kind implements Serializable  {
 
     private String kindName;
 
-
+  //  private boolean ifDeafult;
 
     public ObjectId getKindId() {
         return kindId;
@@ -25,10 +25,8 @@ public class Kind implements Serializable  {
         this.kindId = kindId;
     }
 public Kind(){}
-
     public Kind(String kindName) {
         this.kindName = kindName;
-
     }
 
     public static long getSerialVersionUID() {
@@ -43,5 +41,11 @@ public Kind(){}
         this.kindName = kindName;
     }
 
-
+//    public boolean isIfDeafult() {
+//        return ifDeafult;
+//    }
+//
+//    public void setIfDeafult(boolean ifDeafult) {
+//        this.ifDeafult = ifDeafult;
+//    }
 }

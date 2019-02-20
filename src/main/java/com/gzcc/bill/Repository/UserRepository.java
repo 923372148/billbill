@@ -1,11 +1,11 @@
-package com.gzcc.bill.Repoistory;
+package com.gzcc.bill.Repository;
 
 import com.gzcc.bill.domain.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepoistory extends MongoRepository<User,String > {
+public interface UserRepository extends MongoRepository<User,String > {
 
-    User findByOpenId(String OpenId);
+    User findByOpenId(String openId);
 }

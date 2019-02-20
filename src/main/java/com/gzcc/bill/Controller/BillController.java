@@ -1,7 +1,8 @@
 package com.gzcc.bill.Controller;
 
-import com.gzcc.bill.Repoistory.PersonalBillRepoistory;
-import com.gzcc.bill.Repoistory.UserRepoistory;
+import com.gzcc.bill.Repository.PersonalBillRepository;
+import com.gzcc.bill.Repository.UserRepository;
+import com.gzcc.bill.Service.BillAccountService;
 import com.gzcc.bill.domain.PersonalBill;
 import com.gzcc.bill.domain.User;
 import org.bson.types.ObjectId;
@@ -17,25 +18,34 @@ import java.util.Optional;
 @Controller
 public class BillController {
     @Autowired
-    private PersonalBillRepoistory personalBillRepoistory;
+    private PersonalBillRepository personalBillRepository;
     @Autowired
-    private UserRepoistory userRepoistory ;
+    private UserRepository userRepository ;
+    @Autowired
+    private BillAccountService billAccountService;
     @RequestMapping(value="/setPersonalBill")
     @ResponseBody
-    public Map setPersonalBill(HttpServlet request, String personalBillId){
-        ObjectId objectId=new ObjectId(personalBillId);
+    public Map setPersonalBill(HttpServlet request,String openId,String personalBillName ,String description){
 
-        personalBillRepoistory.findById(personalBillId);
+Map map=billAccountService.newBill(openId,personalBillName , description);
+
         return  new HashMap();
     }
-    @RequestMapping(value="/allAccount")
+    @RequestMapping(value="/findDefalutAccount")
     @ResponseBody
-    public PersonalBill searchAccount(HttpServlet request, String openId){
+    public PersonalBill findDefalutAccount(HttpServlet request, String openId){
      new ObjectId(openId);
-      User user= userRepoistory.findByOpenId(openId);
-        ObjectId objectId=user.getPersonalBillId().get(0);
-   return personalBillRepoistory.findByPersonalBillId(objectId);
+      User user= userRepository.findByOpenId(openId);
+        ObjectId objectId=user.getDefalutpersonalBillId();
+   return personalBillRepository.findByPersonalBillId(objectId);
 
     }
+    @RequestMapping(value="/newAccount")
+    @ResponseBody
+    public Map setnewAccount(HttpServlet request, String personalBillId,String kindId,String comment,long money,boolean ifIncome){
 
+        Map map=billAccountService.newAccount(personalBillId, kindId, comment,money, ifIncome);
+
+        return  map;
+    }
 }

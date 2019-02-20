@@ -1,6 +1,8 @@
 package com.gzcc.bill;
 
-import com.gzcc.bill.Repoistory.KindRepoistory;
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.gzcc.bill.Repository.KindRepository;
+import com.gzcc.bill.Service.KindService;
 import com.gzcc.bill.domain.Kind;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +14,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class BillApplicationTests {
 @Autowired
-private KindRepoistory kindRepoistory;
+private KindRepository kindRepository;
+    @Reference(version = "1.0.0")
+    KindService kindService;
+
 static String[] str={"生活经费","娱乐消费","知识投资"};
     @Test
     public void contextLoads() {
+        kindService.addKind("第一笔测试");
+
+
         for (String a:str
              ) {
-            Kind kind=new Kind(a,true);
-            kindRepoistory.save(kind);
+           Kind kind=new Kind(a);
+          kindRepository.save(kind);
         }
 
 
