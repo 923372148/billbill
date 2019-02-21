@@ -22,7 +22,7 @@ static String[] str={"生活经费","娱乐消费","知识投资"};
     @Test
     public void contextLoads() {
 
-        kindService.addKind("第一笔测试");
+//        kindService.addKind("第一笔测试");
 
 
         for (String a:str
