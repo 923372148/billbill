@@ -6,6 +6,7 @@ import com.gzcc.kindmanager.domain.Kind;
 import org.bson.types.ObjectId;
 
 @Service(version = "1.0.0")
+@org.springframework.stereotype.Service("kindService")
 public class KindServiceImpl  implements KindService{
 private final KindRepository kindRepository;
 

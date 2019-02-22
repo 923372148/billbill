@@ -1,8 +1,10 @@
 package com.gzcc.bill.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.gzcc.bill.Repository.PersonalBillRepository;
 import com.gzcc.bill.Repository.RunningAccountRepository;
 import com.gzcc.bill.Repository.UserRepository;
+import com.gzcc.bill.domain.Kind;
 import com.gzcc.bill.domain.PersonalBill;
 import com.gzcc.bill.domain.RunningAccount;
 import com.gzcc.bill.domain.User;
@@ -19,7 +21,8 @@ public class BillAccountServiceImpl implements BillAccountService {
     private final PersonalBillRepository personalBillRepository;
     private final UserRepository userRepository ;
     private final RunningAccountRepository runningAccountRepository;
-
+    @Reference(version = "1.0.0")
+    KindService kindService ;
 @Autowired
     public BillAccountServiceImpl(PersonalBillRepository personalBillRepository, UserRepository userRepository, RunningAccountRepository runningAccountRepository) {
         this.personalBillRepository = personalBillRepository;
@@ -31,6 +34,8 @@ public class BillAccountServiceImpl implements BillAccountService {
     public Map newAccount(String personalBillId,String kindId,String comment,long money,boolean ifIncome) {
         PersonalBill personalBill=personalBillRepository.findByPersonalBillId(new ObjectId(personalBillId));
         RunningAccount runningAccount=new RunningAccount(money,ifIncome,comment,new Date());
+        Kind kind=kindService.findKindBykindId(new ObjectId(kindId));
+
         runningAccount.setKindName("生活类");
         personalBill.setIcome(personalBill.getIcome()+money);
         personalBill.getRunningAccountListId().add(runningAccountRepository.save(runningAccount).getRunningAccountId());

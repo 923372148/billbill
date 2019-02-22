@@ -1,6 +1,7 @@
 package com.gzcc.bill.Service;
 
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gzcc.bill.Repository.PersonalBillRepository;
@@ -36,6 +37,8 @@ public class LoginServiceImpl implements LoginService {
 private PersonalBillRepository personalBillRepository;
 @Autowired
 private UserRepository userRepository ;
+    @Reference(version = "1.0.0")
+ KindService kindService;
     //
 //    @Autowired
 //    private MachineRepository machineRepository ;
