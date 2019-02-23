@@ -4,15 +4,20 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.gzcc.kindmanager.Repository.KindRepository;
 import com.gzcc.kindmanager.domain.Kind;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Service(version = "1.0.0")
+//
+//@Service(version = "1.0.0")
 @org.springframework.stereotype.Service("kindService")
 public class KindServiceImpl  implements KindService{
-private final KindRepository kindRepository;
 
+private final KindRepository kindRepository;
+@Autowired
     public KindServiceImpl(KindRepository kindRepository) {
         this.kindRepository = kindRepository;
     }
+
+
 
     @Override
     public boolean  addKind(String kindName) {

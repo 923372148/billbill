@@ -1,20 +1,21 @@
 spring:
-  dubbo:
-   application:
-     name: provider
-   registry:
-     address: zookeeper://106.12.203.66:2181
-   protocol:
-    name: dubbo
-    port: 8880
-   scan:  com.gzcc.kindmanager.Service
+ #dubbo:
+   # scan:  com.gzcc.kindmanager.Service
+   #   application:
+   #     name: provider
+   #   registry:
+   #     address: zookeeper://106.12.203.66:2181
+   #   protocol:
+   #    name: dubbo
+   #    port: 8880
   data:
     mongodb:
       uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
+  main:
+    allow-bean-definition-overriding: true
 # username: authmanager
 #     password: hopnetworks
 #     database: dota2data
 #      authentication-database: dota2data
 server:
   port:  8889
-
