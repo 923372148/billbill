@@ -1,11 +1,12 @@
 spring:
-  dubbo:
-   application:
-     name: consumer
-   registry:
-     address: zookeeper://106.12.203.66:2181
-   protocol:
-   scan:  com.gzcc.bill.Service
+#  dubbo:
+#   application:
+#     name: consumer
+#   registry:
+#     address: zookeeper://106.12.203.66:2181
+#   protocol:
+#   scan:  com.gzcc.bill.Service
+
   data:
     mongodb:
       uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill

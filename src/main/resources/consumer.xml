@@ -5,7 +5,7 @@
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd        http://dubbo.apache.org/schema/dubbo        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <!--<dubbo:application name="consumer-of-helloworld-app"  />-->
+    <dubbo:application name="consumer-of-helloworld-app"  />
 
 
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
