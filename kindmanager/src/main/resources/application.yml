@@ -10,7 +10,7 @@ spring:
    #    port: 8880
   data:
     mongodb:
-      uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
+      uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/kindmanager
   main:
     allow-bean-definition-overriding: true
 # username: authmanager

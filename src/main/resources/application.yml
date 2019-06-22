@@ -5,11 +5,11 @@ spring:
 #   registry:
 #     address: zookeeper://106.12.203.66:2181
 #   protocol:
-#   scan:  com.gzcc.bill.Service
+#   scan:  com.gzcc.kindmanager.Service
 
   data:
     mongodb:
-      uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/bill
+      uri: mongodb://gzcc:jsjs137139@caixiaoshan.club:27017/kindmanager
 # username: authmanager
 #     password: hopnetworks
 #     database: dota2data
